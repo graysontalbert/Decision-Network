@@ -10,7 +10,8 @@ type DatabaseDecision = {
   option_a: string;
   option_b: string;
   image_a_url: string | null;
-image_b_url: string | null;  
+image_b_url: string | null;
+decision_type: "photo" | "text";
   audience: string;
   category: string;
   college: string;
@@ -194,13 +195,13 @@ localStorage.setItem(
     : "border-gray-300"
 }`} 
   >
-    {decision.image_a_url && (
-      <img
-        src={decision.image_a_url}
-        alt={decision.option_a}
-        className="aspect-square w-full object-cover"
-      />
-    )}
+    {decision.decision_type === "photo" && decision.image_a_url && (
+  <img
+    src={decision.image_a_url}
+    alt={decision.option_a}
+    className="h-48 w-full object-cover"
+  />
+)} 
 
     <div className="p-4">
       <span className="text-xs font-bold text-gray-500">A</span>
@@ -217,13 +218,13 @@ localStorage.setItem(
     : "border-gray-300"
 }`}
   >
-    {decision.image_b_url && (
-      <img
-        src={decision.image_b_url}
-        alt={decision.option_b}
-        className="aspect-square w-full object-cover"
-      />
-    )}
+    {decision.decision_type === "photo" && decision.image_b_url && (
+  <img
+    src={decision.image_b_url}
+    alt={decision.option_b}
+    className="h-48 w-full object-cover"
+  />
+)} 
 
     <div className="p-4">
       <span className="text-xs font-bold text-gray-500">B</span>

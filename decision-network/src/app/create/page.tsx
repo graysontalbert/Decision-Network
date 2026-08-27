@@ -76,6 +76,7 @@ async function handlePost() {
       image_b_url: imageBUrl,
       audience,
       category,
+      decision_type: decisionType,
       college: "Delaware State University",
     });
 
