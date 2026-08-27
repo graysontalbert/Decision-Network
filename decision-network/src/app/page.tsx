@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react"; 
 import { supabase } from "@/lib/supabase";
+import { cursorTo } from "readline";
 type Vote = "A" | "B" | null;
 type DatabaseDecision = {
   id: number;
@@ -24,8 +25,13 @@ export default function Home() {
 
 const [databaseDecisions, setDatabaseDecisions] =
   useState<DatabaseDecision[]>([]);
+const [votedDecisionIds, setVotedDecisionIds] = useState<number[]>([]);
 
-useEffect(() => {
+const [votedChoices, setVotedChoices] = useState<
+  Record<number, "A" | "B">
+>({});
+useEffect(() => { 
+
   async function loadDecisions() {
     const { data, error } = await supabase
       .from("decisions")
@@ -42,10 +48,21 @@ useEffect(() => {
 
   loadDecisions();
 }, []);
+useEffect(() => {
+  const savedVotes = localStorage.getItem("votedDecisions");
+
+  if (savedVotes) {
+    setVotedDecisionIds(JSON.parse(savedVotes));
+  }
+}, []);
 async function handleDatabaseVote(
   decisionId: number,
   choice: "A" | "B"
 ) {
+  if (votedDecisionIds.includes(decisionId)) {
+  return;
+}
+  
   const { error } = await supabase.rpc("vote_on_decision", {
     decision_id: decisionId,
     choice,
@@ -55,7 +72,29 @@ async function handleDatabaseVote(
     console.error("Vote failed:", error);
     return;
   }
+const updatedVotedIds = [...votedDecisionIds, decisionId];
 
+setVotedDecisionIds(updatedVotedIds);
+
+localStorage.setItem(
+  "votedDecisions",
+  JSON.stringify(updatedVotedIds)
+);
+localStorage.setItem(
+  "votedDecisions",
+  JSON.stringify(updatedVotedIds)
+);
+const updatedChoices = {
+  ...votedChoices,
+  [decisionId]: choice,
+};
+
+setVotedChoices(updatedChoices);
+
+localStorage.setItem(
+  "votedChoices",
+  JSON.stringify(updatedChoices)
+);
   setDatabaseDecisions((current) =>
     current.map((decision) => {
       if (decision.id !== decisionId) return decision;
@@ -148,7 +187,12 @@ async function handleDatabaseVote(
 <div className="mt-4 grid grid-cols-2 gap-3">
   <button
     onClick={() => handleDatabaseVote(decision.id, "A")}
-    className="overflow-hidden rounded-xl border border-gray-300 text-left"
+    disabled={votedDecisionIds.includes(decision.id)}
+    className={`overflow-hidden rounded-xl border text-left disabled:cursor-not-allowed ${
+  votedChoices[decision.id] === "A"
+    ? "border-black ring-2 ring-black"
+    : "border-gray-300"
+}`} 
   >
     {decision.image_a_url && (
       <img
@@ -166,7 +210,12 @@ async function handleDatabaseVote(
 
   <button
     onClick={() => handleDatabaseVote(decision.id, "B")}
-    className="overflow-hidden rounded-xl border border-gray-300 text-left"
+    disabled={votedDecisionIds.includes(decision.id)}
+    className={`overflow-hidden rounded-xl border text-left disabled:cursor-not-allowed ${
+  votedChoices[decision.id] === "B"
+    ? "border-black ring-2 ring-black"
+    : "border-gray-300"
+}`}
   >
     {decision.image_b_url && (
       <img
@@ -182,6 +231,11 @@ async function handleDatabaseVote(
     </div>
   </button>
 </div>
+{votedDecisionIds.includes(decision.id) && (
+  <p className="mt-3 text-sm font-semibold text-gray-500">
+    ✓ Voted
+  </p>
+)}
     {(() => {
   const totalVotes = decision.votes_a + decision.votes_b; 
 
