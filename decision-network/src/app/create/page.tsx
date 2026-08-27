@@ -11,7 +11,7 @@ export default function CreateDecision() {
   const [optionB, setOptionB] = useState("");
   const [audience, setAudience] = useState("DSU");
   const [category, setCategory] = useState("Fashion");
-
+const [decisionType, setDecisionType] = useState<"photo" | "text">("photo");
   const [imageA, setImageA] = useState<string | null>(null);
   const [imageB, setImageB] = useState<string | null>(null);
 const [fileA, setFileA] = useState<File | null>(null);
@@ -22,6 +22,10 @@ const [postError, setPostError] = useState("");
 
 async function handlePost() {
   if (!question || !optionA || !optionB) return;
+  if (decisionType === "photo" && (!fileA || !fileB)) {
+  setPostError("Add both photos before posting.");
+  return;
+}
 
   setPosting(true);
   setPostError("");
@@ -30,7 +34,7 @@ async function handlePost() {
     let imageAUrl: string | null = null;
     let imageBUrl: string | null = null;
 
-    if (fileA) {
+    if (decisionType === "photo" && fileA) {
       const extensionA = fileA.name.split(".").pop() || "jpg";
       const pathA = `decisions/${crypto.randomUUID()}.${extensionA}`;
 
@@ -47,7 +51,7 @@ async function handlePost() {
       imageAUrl = data.publicUrl;
     }
 
-    if (fileB) {
+    if (decisionType === "photo" && fileB) {
       const extensionB = fileB.name.split(".").pop() || "jpg";
       const pathB = `decisions/${crypto.randomUUID()}.${extensionB}`;
 
@@ -108,10 +112,40 @@ async function handlePost() {
       </header>
 
       <div className="mx-auto max-w-xl px-4 py-6">
-        {/* Question */}
-        <label className="text-sm font-semibold">
-          What are you deciding?
-        </label>
+        <div className="mb-6">
+  <p className="mb-2 text-sm font-semibold">Decision type</p>
+
+  <div className="grid grid-cols-2 gap-2">
+    <button
+      type="button"
+      onClick={() => setDecisionType("photo")}
+      className={`rounded-xl border px-4 py-3 font-semibold ${
+        decisionType === "photo"
+          ? "border-black bg-black text-white"
+          : "border-gray-300 bg-white text-black"
+      }`}
+    >
+      Photo
+    </button>
+
+    <button
+      type="button"
+      onClick={() => setDecisionType("text")}
+      className={`rounded-xl border px-4 py-3 font-semibold ${
+        decisionType === "text"
+          ? "border-black bg-black text-white"
+          : "border-gray-300 bg-white text-black"
+      }`}
+    >
+      Text
+    </button>
+  </div>
+</div>
+
+{/* Question */}
+<label className="text-sm font-semibold">
+  What are you deciding?
+</label>
 
         <textarea
           value={question}
@@ -123,6 +157,9 @@ async function handlePost() {
 
         {/* OPTION A */}
         <h2 className="mt-8 text-sm font-semibold">Option A</h2>
+        {decisionType === "photo" && ( 
+          <>
+
 
         <label className="mt-2 flex h-48 w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-gray-300 bg-gray-50">
           {imageA ? (
@@ -141,19 +178,20 @@ async function handlePost() {
           <input
   type="file"
   accept="image/*"
-  capture="environment"
-  className="hidden"
-  onChange={(e) => {
-    const file = e.target.files?.[0];
+capture="environment"
+className="hidden"
+onChange={(e) => {
+  const file = e.target.files?.[0];
 
-    if (file) {
+      if (file) {
       setFileA(file);
       setImageA(URL.createObjectURL(file));
     }
   }}
 />
-          /
-        </label>
+</label>
+</>
+)}
 
         <input
           value={optionA}
@@ -164,7 +202,8 @@ async function handlePost() {
 
         {/* OPTION B */}
         <h2 className="mt-8 text-sm font-semibold">Option B</h2>
-
+{decisionType === "photo" && (
+  <>
         <label className="mt-2 flex h-48 w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-gray-300 bg-gray-50">
           {imageB ? (
             <img
@@ -194,6 +233,8 @@ async function handlePost() {
   }}
 /> 
         </label>
+        </>
+)} 
 
         <input
           value={optionB}
