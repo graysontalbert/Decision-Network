@@ -236,38 +236,10 @@ async function handleDatabaseVote(
         
         
         {/* Simple text poll */}
-        <article className="border-b border-gray-200 px-4 py-5">
-          <UserHeader
-            name="Tyrese"
-            school="DSU"
-            time="1h"
-          />
+        
+          
 
-          <h2 className="mt-4 text-[17px] font-semibold">
-            Best place to study on campus?
-          </h2>
-
-          <div className="mt-4 space-y-2">
-            {[
-              "Library — 2nd Floor",
-              "Student Center",
-              "MLK Quiet Room",
-            ].map((option) => (
-              <button
-                key={option}
-                className="w-full rounded-xl border border-gray-300 px-4 py-3 text-left text-sm font-medium hover:bg-gray-50"
-              >
-                {option}
-              </button>
-            ))}
-          </div>
-
-          <p className="mt-4 text-xs text-gray-500">
-            Vote to see results
-          </p>
-
-          <SocialActions likes="54" comments="13" />
-        </article>
+          
       </section>
 
       {/* BOTTOM NAVIGATION */}
