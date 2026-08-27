@@ -145,49 +145,45 @@ async function handleDatabaseVote(
     <h2 className="mt-4 text-[18px] font-semibold">
       {decision.question}
     </h2>
+<div className="mt-4 grid grid-cols-2 gap-3">
+  <button
+    onClick={() => handleDatabaseVote(decision.id, "A")}
+    className="overflow-hidden rounded-xl border border-gray-300 text-left"
+  >
+    {decision.image_a_url && (
+      <img
+        src={decision.image_a_url}
+        alt={decision.option_a}
+        className="aspect-square w-full object-cover"
+      />
+    )}
 
-    <div className="mt-4 grid grid-cols-2 gap-3">
-      <button
-  onClick={() => handleDatabaseVote(decision.id, "A")}
-  className="overflow-hidden rounded-xl border border-gray-300 text-left"
->
-  {decision.image_a_url && (
-    <img
-      src={decision.image_a_url}
-      alt={decision.option_a}
-      className="aspect-square w-full object-cover"
-    />
-  )}
+    <div className="p-4">
+      <span className="text-xs font-bold text-gray-500">A</span>
+      <p className="mt-1 font-semibold">{decision.option_a}</p>
+    </div>
+  </button>
 
-  <div className="p-4">
-    <span className="text-xs font-bold text-gray-500">A</span>
-    <p className="mt-1 font-semibold">
-      {decision.option_a}
-    </p>
-  </div>
-</button>
-     <button
-  onClick={() => handleDatabaseVote(decision.id, "B")}
-  className="overflow-hidden rounded-xl border border-gray-300 text-left"
->
-  {decision.image_b_url && (
-    <img
-      src={decision.image_b_url}
-      alt={decision.option_b}
-      className="aspect-square w-full object-cover"
-    />
-  )}
+  <button
+    onClick={() => handleDatabaseVote(decision.id, "B")}
+    className="overflow-hidden rounded-xl border border-gray-300 text-left"
+  >
+    {decision.image_b_url && (
+      <img
+        src={decision.image_b_url}
+        alt={decision.option_b}
+        className="aspect-square w-full object-cover"
+      />
+    )}
 
-  <div className="p-4">
-    <span className="text-xs font-bold text-gray-500">B</span>
-    <p className="mt-1 font-semibold">
-      {decision.option_b}
-    </p>
-  </div>
-</button> 
-</div>.
+    <div className="p-4">
+      <span className="text-xs font-bold text-gray-500">B</span>
+      <p className="mt-1 font-semibold">{decision.option_b}</p>
+    </div>
+  </button>
+</div>
     {(() => {
-  const totalVotes = decision.votes_a + decision.votes_b;
+  const totalVotes = decision.votes_a + decision.votes_b; 
 
   const percentA =
     totalVotes === 0
