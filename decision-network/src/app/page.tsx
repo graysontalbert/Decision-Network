@@ -195,18 +195,33 @@ localStorage.setItem(
     : "border-gray-300"
 }`} 
   >
-    {decision.decision_type === "photo" && decision.image_a_url && (
+{decision.decision_type === "photo" && decision.image_b_url && (
   <img
-    src={decision.image_a_url}
-    alt={decision.option_a}
+    src={decision.image_b_url}
+    alt={decision.option_b}
     className="h-48 w-full object-cover"
   />
-)} 
+)}
 
-    <div className="p-4">
-      <span className="text-xs font-bold text-gray-500">A</span>
-      <p className="mt-1 font-semibold">{decision.option_a}</p>
-    </div>
+<div
+  className={
+    decision.decision_type === "text"
+      ? "flex min-h-[160px] flex-col items-center justify-center p-6 text-center"
+      : "p-4"
+  }
+>
+  <span className="text-xs font-bold text-gray-500">A</span>
+
+  <p
+    className={
+      decision.decision_type === "text"
+        ? "mt-2 text-lg font-semibold"
+        : "mt-1 font-semibold"
+    }
+  >
+    {decision.option_a}
+  </p>
+</div>
   </button>
 
   <button
@@ -226,10 +241,25 @@ localStorage.setItem(
   />
 )} 
 
-    <div className="p-4">
-      <span className="text-xs font-bold text-gray-500">B</span>
-      <p className="mt-1 font-semibold">{decision.option_b}</p>
-    </div>
+    <div
+  className={
+    decision.decision_type === "text"
+      ? "flex min-h-[160px] flex-col items-center justify-center p-6 text-center"
+      : "p-4"
+  }
+>
+  <span className="text-xs font-bold text-gray-500">B</span>
+
+  <p
+    className={
+      decision.decision_type === "text"
+        ? "mt-2 text-lg font-semibold"
+        : "mt-1 font-semibold"
+    }
+  >
+    {decision.option_b}
+  </p>
+</div>
   </button>
 </div>
 {votedDecisionIds.includes(decision.id) && (
