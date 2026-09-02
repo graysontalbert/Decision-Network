@@ -128,7 +128,7 @@ localStorage.setItem(
           <div className="flex items-center gap-5">
             <SearchIcon />
             <HeartIcon />
-
+<Link href="/profile"></Link>
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black text-xs font-semibold text-white">
               G
             </div>
