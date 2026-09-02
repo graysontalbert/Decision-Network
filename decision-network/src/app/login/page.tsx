@@ -1,33 +1,27 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
-export default function SignUpPage() {
+export default function LoginPage() {
   const router = useRouter();
 
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  async function handleSignUp(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
 
     setLoading(true);
     setMessage("");
 
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
-      options: {
-        data: {
-          display_name: name,
-        },
-      },
     });
 
     if (error) {
@@ -36,34 +30,20 @@ export default function SignUpPage() {
       return;
     }
 
-    if (data.session) {
-      router.push("/");
-    } else {
-      setMessage("Account created! Check your email to confirm your account.");
-    }
-
-    setLoading(false);
+    router.push("/");
+    router.refresh();
   }
 
   return (
     <main className="min-h-screen bg-white px-4 py-12 text-black">
       <div className="mx-auto max-w-md">
-        <h1 className="text-3xl font-bold">Join Decision</h1>
+        <h1 className="text-3xl font-bold">Welcome back</h1>
 
         <p className="mt-2 text-gray-500">
-          Create an account and start asking your network.
+          Log in to your Decision account.
         </p>
 
-        <form onSubmit={handleSignUp} className="mt-8 space-y-4">
-          <input
-            type="text"
-            placeholder="Your name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-black"
-          />
-
+        <form onSubmit={handleLogin} className="mt-8 space-y-4">
           <input
             type="email"
             placeholder="Email"
@@ -79,7 +59,6 @@ export default function SignUpPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            minLength={6}
             className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-black"
           />
 
@@ -88,20 +67,23 @@ export default function SignUpPage() {
             disabled={loading}
             className="w-full rounded-xl bg-black px-4 py-3 font-semibold text-white disabled:opacity-50"
           >
-            {loading ? "Creating account..." : "Create account"}
+            {loading ? "Logging in..." : "Log in"}
           </button>
         </form>
 
         {message && (
-          <p className="mt-4 text-center text-sm text-gray-600">{message}</p>
+          <p className="mt-4 text-center text-sm text-red-500">
+            {message}
+          </p>
         )}
+
         <p className="mt-6 text-center text-sm text-gray-500">
-  Already have an account?{" "}
-  <Link href="/login" className="font-semibold text-black">
-    Log in
-  </Link>
-</p>
+          Don&apos;t have an account?{" "}
+          <Link href="/signup" className="font-semibold text-black">
+            Sign up
+          </Link>
+        </p>
       </div>
     </main>
   );
-}
+} 
