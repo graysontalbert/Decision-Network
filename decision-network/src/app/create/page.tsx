@@ -22,11 +22,23 @@ const [postError, setPostError] = useState("");
 
 async function handlePost() {
   if (!question || !optionA || !optionB) return;
+
   if (decisionType === "photo" && (!fileA || !fileB)) {
   setPostError("Add both photos before posting.");
   return;
 }
+const {
+  data: { user },
+  error: userError,
+} = await supabase.auth.getUser();
 
+if (userError || !user) {
+  setPostError("Please sign in before posting.");
+  return;
+}
+
+const authorName =
+  user.user_metadata?.display_name || "Student";
   setPosting(true);
   setPostError("");
 
@@ -77,8 +89,11 @@ async function handlePost() {
       audience,
       category,
       decision_type: decisionType,
+      user_id: user.id,
+author_name: authorName,
       college: "Delaware State University",
     });
+
 
     if (error) throw error;
 

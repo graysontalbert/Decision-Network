@@ -5,6 +5,8 @@ import { supabase } from "@/lib/supabase";
 import { cursorTo } from "readline";
 type Vote = "A" | "B" | null;
 type DatabaseDecision = {
+  author_name: string | null;
+user_id: string | null;
   id: number;
   question: string;
   option_a: string;
@@ -167,7 +169,9 @@ localStorage.setItem(
 
         <div>
           <div className="flex items-center gap-2">
-            <p className="text-sm font-semibold">Student</p>
+            <p className="text-sm font-semibold">
+  {decision.author_name || "Student"}
+</p>
             <span className="text-xs font-semibold text-blue-600">
               DSU
             </span>
