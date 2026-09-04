@@ -78,10 +78,11 @@ export default function ExplorePage() {
           )}
 
           {filteredDecisions.map((decision) => (
-            <div
-              key={decision.id}
-              className="rounded-2xl border border-gray-200 p-4"
-            >
+            <Link
+  href={`/decision/${decision.id}`}
+  key={decision.id}
+  className="block rounded-2xl border border-gray-200 p-4"
+>
               <div className="flex items-center justify-between">
                 <p className="font-semibold">
                   {decision.author_name || "Student"}
@@ -107,10 +108,10 @@ export default function ExplorePage() {
                   <p className="mt-1 font-semibold">{decision.option_b}</p>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
-      </div>
+      </div>F
     </main>
   );
 }

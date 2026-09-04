@@ -74,10 +74,11 @@ export default function ActivityPage() {
               (decision.votes_a || 0) + (decision.votes_b || 0);
 
             return (
-              <div
-                key={decision.id}
-                className="rounded-2xl border border-gray-200 p-4"
-              >
+              <Link
+  href={`/decision/${decision.id}`}
+  key={decision.id}
+  className="block rounded-2xl border border-gray-200 p-4"
+>
                 <p className="text-sm text-gray-500">
                   Your decision received
                 </p>
@@ -89,7 +90,7 @@ export default function ActivityPage() {
                 <p className="mt-2 font-semibold">
                   {decision.question}
                 </p>
-              </div>
+              </Link>
             );
           })}
         </div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
 type MyDecision = {
@@ -87,15 +88,16 @@ export default function ProfilePage() {
             <p className="text-gray-500">No decisions yet.</p>
           ) : (
             decisions.map((decision) => (
-              <div
-                key={decision.id}
-                className="rounded-xl border border-gray-200 p-4"
-              >
+              <Link
+  href={`/decision/${decision.id}`}
+  key={decision.id}
+  className="block rounded-xl border border-gray-200 p-4"
+>
                 <p className="font-semibold">{decision.question}</p>
                 <p className="mt-1 text-sm text-gray-500">
                   {decision.category}
                 </p>
-              </div>
+              </Link>
             ))
           )}
         </div>
