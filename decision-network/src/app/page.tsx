@@ -349,7 +349,9 @@ localStorage.setItem(
 </Link>
           
 
-          <NavButton icon={<BellIcon />} label="Activity" />
+          <Link href="/activity">
+  <NavButton icon={<BellIcon />} label="Activity" />
+</Link>
           <Link href="/profile">
   <NavButton icon={<UserIcon />} label="Profile" />
 </Link>
