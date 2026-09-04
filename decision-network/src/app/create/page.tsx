@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -17,6 +17,19 @@ const [decisionType, setDecisionType] = useState<"photo" | "text">("photo");
 const [fileA, setFileA] = useState<File | null>(null);
 const [fileB, setFileB] = useState<File | null>(null);
 const router = useRouter();
+useEffect(() => {
+  async function checkUser() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      router.push("/login");
+    }
+  }
+
+  checkUser();
+}, [router]);
 const [posting, setPosting] = useState(false);
 const [postError, setPostError] = useState("");
 
