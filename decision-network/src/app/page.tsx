@@ -338,7 +338,9 @@ localStorage.setItem(
       <nav className="fixed bottom-0 left-0 right-0 border-t border-gray-200 bg-white">
         <div className="mx-auto flex max-w-xl items-center justify-around py-3">
           <NavButton icon={<HomeIcon />} label="Home" active />
-          <NavButton icon={<SearchIcon />} label="Explore" />
+          <Link href="/explore">
+  <NavButton icon={<SearchIcon />} label="Explore" />
+</Link>
 <Link
   href="/create"
   className="flex h-11 w-11 items-center justify-center rounded-xl bg-black text-white"
