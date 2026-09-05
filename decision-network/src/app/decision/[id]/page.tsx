@@ -83,6 +83,14 @@ if (savedChoices[data.id]) {
   }
 }, [id]);
   async function handleVote(choice: "A" | "B") {
+    const {
+  data: { user },
+} = await supabase.auth.getUser();
+
+if (!user) {
+  window.location.href = "/login";
+  return;
+}
   if (!decision || voting || votedChoice) return;
 
   setVoting(true);

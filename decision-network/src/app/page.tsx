@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { cursorTo } from "readline";
 type Vote = "A" | "B" | null;
-type DatabaseDecision = {
+type DatabaseDecision = { 
   author_name: string | null;
 user_id: string | null;
   id: number;
@@ -19,6 +19,7 @@ decision_type: "photo" | "text";
   college: string;
   votes_a: number;
   votes_b: number;
+  comments_count: number;
   created_at: string;
 };
 export default function Home() {
@@ -62,6 +63,14 @@ async function handleDatabaseVote(
   decisionId: number,
   choice: "A" | "B"
 ) {
+  const {
+  data: { user },
+} = await supabase.auth.getUser();
+
+if (!user) {
+  window.location.href = "/login";
+  return;
+} 
   if (votedDecisionIds.includes(decisionId)) {
   return;
 }
@@ -323,7 +332,9 @@ localStorage.setItem(
       </div>
 
       <p className="mt-3 text-xs text-gray-500">
-        {totalVotes} {totalVotes === 1 ? "vote" : "votes"}
+        {totalVotes} {totalVotes === 1 ? "vote" : "votes"} ·{" "}
+{decision.comments_count}{" "}
+{decision.comments_count === 1 ? "comment" : "comments"} 
       </p>
     </div>
   );
