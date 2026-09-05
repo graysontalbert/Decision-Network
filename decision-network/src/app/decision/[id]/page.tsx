@@ -211,7 +211,11 @@ if (savedChoices[data.id]) {
               </div>
             </button>
           </div>
-
+{votedChoice && (
+  <p className="mt-3 text-sm font-semibold text-gray-500">
+    ✓ Voted
+  </p>
+)}
           <div className="mt-8">
             <div className="flex justify-between font-semibold">
               <span>A</span>
