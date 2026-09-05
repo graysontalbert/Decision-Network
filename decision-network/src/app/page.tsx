@@ -190,8 +190,13 @@ localStorage.setItem(
     </div>
 
     <h2 className="mt-4 text-[18px] font-semibold">
-      {decision.question}
-    </h2>
+  <Link
+    href={`/decision/${decision.id}`}
+    className="hover:underline"
+  >
+    {decision.question}
+  </Link>
+</h2>
 <div className="mt-4 grid grid-cols-2 gap-3">
   <button
     onClick={() => handleDatabaseVote(decision.id, "A")}
