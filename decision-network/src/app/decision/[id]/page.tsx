@@ -18,6 +18,14 @@ type Decision = {
   author_name: string | null;
   category: string;
 };
+type Comment = {
+  id: number;
+  decision_id: number;
+  user_id: string;
+  author_name: string | null;
+  body: string;
+  created_at: string;
+};
 
 export default function DecisionPage() {
   const params = useParams();
@@ -27,6 +35,9 @@ export default function DecisionPage() {
   const [loading, setLoading] = useState(true);
 const [votedChoice, setVotedChoice] = useState<"A" | "B" | null>(null);
 const [voting, setVoting] = useState(false);
+const [comments, setComments] = useState<Comment[]>([]);
+const [commentText, setCommentText] = useState("");
+const [postingComment, setPostingComment] = useState(false);
   useEffect(() => {
     async function loadDecision() {
       const { data, error } = await supabase
@@ -54,6 +65,23 @@ if (savedChoices[data.id]) {
       loadDecision();
     }
   }, [id]);
+  useEffect(() => {
+  async function loadComments() {
+    const { data, error } = await supabase
+      .from("comments")
+      .select("*")
+      .eq("decision_id", id)
+      .order("created_at", { ascending: true });
+
+    if (!error && data) {
+      setComments(data);
+    }
+  }
+
+  if (id) {
+    loadComments();
+  }
+}, [id]);
   async function handleVote(choice: "A" | "B") {
   if (!decision || voting || votedChoice) return;
 
@@ -103,7 +131,49 @@ if (savedChoices[data.id]) {
 
   setVoting(false);
 }
+async function handlePostComment() {
+  const body = commentText.trim();
 
+  if (!body || postingComment) return;
+
+  setPostingComment(true);
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    setPostingComment(false);
+    return;
+  }
+
+  const authorName =
+    user.user_metadata?.name ||
+    user.user_metadata?.full_name ||
+    user.email?.split("@")[0] ||
+    "Student";
+
+  const { data, error } = await supabase
+    .from("comments")
+    .insert({
+      decision_id: id,
+      user_id: user.id,
+      author_name: authorName,
+      body,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error(error);
+    setPostingComment(false);
+    return;
+  }
+
+  setComments((current) => [...current, data]);
+  setCommentText("");
+  setPostingComment(false);
+}
   if (loading) {
     return (
       <main className="min-h-screen bg-white p-6 text-black">
@@ -244,6 +314,49 @@ if (savedChoices[data.id]) {
             <p className="mt-5 text-sm text-gray-500">
               {totalVotes} {totalVotes === 1 ? "vote" : "votes"}
             </p>
+            <div className="mt-10 border-t border-gray-200 pt-6">
+  <h2 className="text-lg font-bold">Comments</h2>
+
+  <div className="mt-4 flex gap-2">
+    <input
+      type="text"
+      value={commentText}
+      onChange={(e) => setCommentText(e.target.value)}
+      placeholder="Add a comment..."
+      className="flex-1 rounded-xl border border-gray-300 px-4 py-3 outline-none"
+    />
+
+    <button
+      type="button"
+      onClick={handlePostComment}
+      disabled={!commentText.trim() || postingComment}
+      className="rounded-xl bg-black px-5 py-3 font-semibold text-white disabled:opacity-40"
+    >
+      {postingComment ? "Posting..." : "Post"}
+    </button>
+  </div>
+
+  <div className="mt-6 space-y-4">
+    {comments.length === 0 ? (
+      <p className="text-sm text-gray-500">
+        No comments yet.
+      </p>
+    ) : (
+      comments.map((comment) => (
+        <div
+          key={comment.id}
+          className="rounded-xl border border-gray-200 p-4"
+        >
+          <p className="font-semibold">
+            {comment.author_name || "Student"}
+          </p>
+
+          <p className="mt-1">{comment.body}</p>
+        </div>
+      ))
+    )}
+  </div>
+</div>
           </div>
         </div>
       </div>
