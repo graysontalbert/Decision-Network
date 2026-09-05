@@ -25,7 +25,8 @@ export default function DecisionPage() {
 
   const [decision, setDecision] = useState<Decision | null>(null);
   const [loading, setLoading] = useState(true);
-
+const [votedChoice, setVotedChoice] = useState<"A" | "B" | null>(null);
+const [voting, setVoting] = useState(false);
   useEffect(() => {
     async function loadDecision() {
       const { data, error } = await supabase
@@ -36,6 +37,14 @@ export default function DecisionPage() {
 
       if (!error && data) {
         setDecision(data);
+
+      const savedChoices = JSON.parse(
+  localStorage.getItem("votedChoices") || "{}"
+);
+
+if (savedChoices[data.id]) {
+  setVotedChoice(savedChoices[data.id]);
+}
       }
 
       setLoading(false);
@@ -45,6 +54,55 @@ export default function DecisionPage() {
       loadDecision();
     }
   }, [id]);
+  async function handleVote(choice: "A" | "B") {
+  if (!decision || voting || votedChoice) return;
+
+  setVoting(true);
+
+  const { error } = await supabase.rpc("vote_on_decision", {
+    decision_id: decision.id,
+    choice,
+  });
+
+  if (error) {
+    console.error(error);
+    setVoting(false);
+    return;
+  }
+
+  setDecision({
+    ...decision,
+    votes_a: decision.votes_a + (choice === "A" ? 1 : 0),
+    votes_b: decision.votes_b + (choice === "B" ? 1 : 0),
+  });
+
+  setVotedChoice(choice);
+
+  const savedIds = JSON.parse(
+    localStorage.getItem("votedDecisions") || "[]"
+  );
+
+  if (!savedIds.includes(decision.id)) {
+    localStorage.setItem(
+      "votedDecisions",
+      JSON.stringify([...savedIds, decision.id])
+    );
+  }
+
+  const savedChoices = JSON.parse(
+    localStorage.getItem("votedChoices") || "{}"
+  );
+
+  localStorage.setItem(
+    "votedChoices",
+    JSON.stringify({
+      ...savedChoices,
+      [decision.id]: choice,
+    })
+  );
+
+  setVoting(false);
+}
 
   if (loading) {
     return (
@@ -100,7 +158,17 @@ export default function DecisionPage() {
           </h1>
 
           <div className="mt-6 grid grid-cols-2 gap-3">
-            <div className="overflow-hidden rounded-2xl border border-gray-300">
+        <button
+  type="button"
+  onClick={() => handleVote("A")}
+  disabled={voting || votedChoice !== null}
+  className={`overflow-hidden rounded-2xl border text-left disabled:cursor-not-allowed ${
+    votedChoice === "A"
+      ? "border-black ring-2 ring-black"
+      : "border-gray-300"
+  }`}
+>
+
               {decision.image_a_url && (
                 <img
                   src={decision.image_a_url}
@@ -115,9 +183,18 @@ export default function DecisionPage() {
                   {decision.option_a}
                 </p>
               </div>
-            </div>
+            </button>
 
-            <div className="overflow-hidden rounded-2xl border border-gray-300">
+           <button
+  type="button"
+  onClick={() => handleVote("B")}
+  disabled={voting || votedChoice !== null}
+  className={`overflow-hidden rounded-2xl border text-left disabled:cursor-not-allowed ${
+    votedChoice === "B"
+      ? "border-black ring-2 ring-black"
+      : "border-gray-300"
+  }`}
+>
               {decision.image_b_url && (
                 <img
                   src={decision.image_b_url}
@@ -132,7 +209,7 @@ export default function DecisionPage() {
                   {decision.option_b}
                 </p>
               </div>
-            </div>
+            </button>
           </div>
 
           <div className="mt-8">
